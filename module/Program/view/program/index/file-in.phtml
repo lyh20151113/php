@@ -1,0 +1,70 @@
+<?php 
+$programs = $this->programs;
+?>
+    
+<table id="program" class="table">
+<tr>
+<th>节目名</th>
+<th>播出时间</th>
+<th>播出时长</th>
+<th>类型</th>
+<th>重播</th>
+</tr>
+<?php foreach ($programs as $program) : ?>
+<tr>
+   <td><?php echo $this->escapeHtml($program->name);?></td>
+   <td><?php echo $this->escapeHtml($program->broadcastTime);?></td>
+   <td><?php echo $this->escapeHtml($program->duration);?></td>
+   <td><select>
+    <option value="1">导视</option>
+    <option value="2">新闻</option>
+    <option selected="selected" value="3">栏目</option>
+    <option value="4">广告</option>
+    <option value="5">其他</option>
+   </select></td>
+   <td><input type="checkbox" value=<?php echo $this->escapeHtml($program->isReplay);?>/></td>
+</tr>
+<?php endforeach; ?>
+ 
+</table>
+<div>
+    <h1><a onClick="save()">保存</a></h1>
+</div>
+
+<script>
+function save(){
+	var t=document.getElementById("program");  
+	var tableData= [];
+
+	var rl= t.rows.length;  
+	for (var i=1;i<rl;i++) {  
+		
+		var name=t.rows[i].cells[0].innerHTML;  
+		
+		var broadcastTime=t.rows[i].cells[1].innerHTML;  
+ 		var duration=t.rows[i].cells[2].innerHTML;  
+ 		var type=t.rows[i].cells[3].getElementsByTagName("select")[0].value;
+ 		var isReplay=t.rows[i].cells[4].getElementsByTagName("input")[0].checked;  
+		tableData[i-1] = {
+				'name':name,
+		        'broadcastTime':broadcastTime,
+		        'duration':duration,
+		        'type':type,
+		        'isReplay':isReplay        
+		}
+	}  
+	$.ajax({
+		url:"<?php echo $this->url('Program',['action' => 'save']);?>",
+		type:"post",
+		data:{
+			'data' :tableData,
+		},
+		success:function(data){
+			alert(data);
+				
+			}
+		}
+	);
+}
+</script>
+

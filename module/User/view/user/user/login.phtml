@@ -1,0 +1,35 @@
+<?php $form = $this->form;
+$error = $this->error;?>
+
+
+    <form id="slick-login" action="<?php echo $this->url('User',['controller'=>'user','action'=>'login'])?>" method="post" >
+      <h3><span class="label label-warning"><?php echo empty($error)?"":$error;?></span></h3>
+        <label for="username">用户名</label><input type="text" name="username"  placeholder="用户名" autocomplete="off">
+        <label for="password">密码</label><input type="password" name="password"  placeholder="密码">
+ 
+ <!--   <img id=imgcaptcha src="<?=$this->imgSrc?>">
+        <input type="button" value="刷新" onclick="javascript:refreshCaptcha();"/>
+ -->   
+        <input type="submit" value="登录">
+    </form>
+
+
+
+
+<script>
+// function refreshCaptcha(){
+//   var ul = '/php/public/DH/user/user/refreshcaptcha.html';
+  
+//   $.ajax({
+//     type : "GET",
+//     url : ul,
+    		
+//     success : function(data, textStatus) {
+   		
+//           $("#imgcaptcha").attr("src",data.imgSrc);		  
+//           },
+//     error : function(r, t, r){
+//           }
+//   });
+// }
+</script>

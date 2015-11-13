@@ -1,0 +1,17 @@
+<?php
+
+
+?>
+
+
+<ul class="pagination">
+    <li><a href="<?php echo $this->url(null,['controller' => 'list','action' => 'index'],['query' => ['page' => $this->first]]);?>" >&laquo;</a></li>
+    <li><a href="<?php echo $this->url(null,['controller' => 'list','action' => 'index'],['query' => ['page' => $this->previous]]);?>" >&lt;</a></li>
+    <?php foreach ($this->pagesInRange as $page) :?>
+        <li <?php echo $page == $this->current?'class="active"':'';?> >
+             <a href="<?php echo $this->url(null,['controller' => 'list','action' => 'index'],['query' => ['page' => $page]]);?>" ><?= $page ?></a>   
+        </li>
+    <?php endforeach;?>
+    <li><a href="<?php echo $this->url(null,['controller' => 'list','action' => 'index'],['query' => ['page' => $this->next]]);?>" >&gt;</a></li>
+    <li><a href="<?php echo $this->url(null,['controller' => 'list','action' => 'index'],['query' => ['page' => $this->last]]);?>" >&raquo;</a></li>
+</ul>

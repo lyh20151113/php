@@ -1,0 +1,43 @@
+<?php
+$form = $this->form;
+?>
+
+
+
+
+<form id="slick-login"
+	action="<?php echo $this->url('User',['controller'=>'user','action'=>'register'])?>"
+	method="post">
+	
+        <label for="username">用户名</label><?php echo $this->forminput($form->get('username'));?>
+        <label for="password">密码</label><?php echo $this->forminput($form->get('password'));?>
+        <label for="passwordConfirm">密码确认</label><?php echo $this->forminput($form->get('passwordConfirm'));?>
+        <label for="fullName">姓名</label><?php echo $this->forminput($form->get('fullName'));?>
+        <label for="email">邮箱</label><?php echo $this->forminput($form->get('email'));?>
+        <input type="submit" name="submit" value="注册" />
+</form>
+
+
+
+
+<script>
+
+$('#passwordConfirm').bind('input propertychange', function() {
+	checkPasswords();
+});
+
+function checkPasswords() {
+	
+    var pass1 = document.getElementById("password");
+    var pass2 = document.getElementById("passwordConfirm");
+
+    if (pass1.value != pass2.value){
+        pass2.setCustomValidity("两次输入的密码不匹配");
+        return true;
+    }
+    else{
+        pass2.setCustomValidity("");
+        return false;
+    }
+}
+</script>

@@ -1,0 +1,186 @@
+  <?php 
+        $date=$this->date;
+        $programs=$this->programs;
+        $programTypes=$this->programTypes;
+        $programNames=$this->programNames;
+  ?>
+  <div class="panel panel panel-default">
+    <div class="panel-body">
+        <div style="float: left;">
+            <div>
+                <b style="font-size: 28px;"><?php echo $playbill->getChannel()->getValue()?></b>
+                <span style="margin-left: 10px"><?php echo $playbill->getProgramCount() == null?"未生成":"已生成"?></span>
+            </div>
+            <div style="margin-top:20px;">
+                <span>提示：此节目单关联<?php echo $playbill->getProgramCount() == null?"0":$playbill->getProgramCount();?>个节目</span>
+            </div>
+        </div>
+        <div  style="float:right;width:20%;height:100%">
+            <?php echo "<a href=# onClick='save()' >保存设置</a>"?>
+            <?php echo "<br/>"?>
+        </div>
+    </div>
+ </div>
+<table id="program" class="table table-bordered">
+<tr id="tr0">
+<th style="display:none">id</th>
+<th>序号</th>
+<th>节目名</th>
+<th>播出时间</th>
+<th>结束时间</th>
+<th>类型</th>
+<th>播放顺序</th>
+<th>节目</th>
+<th>重播</th>
+<th style="display:none">是否删除</th>
+<th><button onClick="add(this)" value=0>新增↓</button></th>
+<th></th>
+</tr>
+<?php $i=0; foreach ($programs as $program) : $i++?>
+<tr id=<?php echo "tr".$i;?>>
+   <td style="display:none"><?php echo $this->escapeHtml($program->getId());?></td>
+   <td><?php echo $i;?></td>
+   <td><input style="width:100px;" value="<?php echo $this->escapeHtml($program->getName());?>"  type="text" /></td>
+   <td><input style="width:70px;" type="text" value="<?php echo $this->escapeHtml($program->getBroadcastTime());?>" /></td>
+   <td><input style="width:70px;" type="text" value="<?php echo $this->escapeHtml($program->getEndTime());?>" /></td>
+   <td><select>
+    <?php foreach ($programTypes as $programType) :?>
+    <option <?php echo $program->getType()!=null&&$program->getType()->getId()==$programType->getId()?"selected='selected'":"";?> value="<?php echo $programType->getId();?>"><?php echo $this->escapeHtml($programType->getValue());?></option>
+    <?php endforeach;?>
+   </select></td>
+   <td><select>
+    <option value=8 selected="selected">顺播</option>
+   </select></td>
+   <td><select> 
+   <?php $temp=1; foreach ($programNames as $programName) :?>
+        <?php if ($program->getProgramSys()!=null&&$program->getProgramSys()->getId()==$programName->getId()){$temp=0;}?>
+    <?php endforeach;?>
+    <?php echo $temp==1?"<option selected='selected' value=''></option>":"";?>
+   <?php foreach ($programNames as $programName) :?>
+    <option <?php echo $program->getProgramSys()!=null&&$program->getProgramSys()->getId()==$programName->getId()?"selected='selected'":"";?> value="<?php echo $programName->getId();?>"><?php echo $this->escapeHtml($programName->getValue());?></option>
+    <?php endforeach;?>
+    </select></td>
+   <td><input type="checkbox" <?php echo $program->getIsReplay()==true?"checked='checked'":"" ?>/></td>
+   <td style="display:none"><input type="checkbox" id=<?php echo "del".$i;?> /></td>
+   <td><button onClick="add(this)" value=<?php echo $i;?>>新增↓</button></td>
+   <td><button onClick="delect(this)" value=<?php echo $i;?>>删除</button></td>
+   <td style="display:none"><?php echo $this->escapeHtml($program->getInitName());?></td>
+</tr>
+<?php endforeach; ?>
+ 
+</table>
+
+<script>
+function timeVerify(startTimes,endTimes){
+	
+	for(var i=0;i<startTimes.length-1;i++){
+		if(startTimes[i]>endTimes[i]||startTimes[i+1]<endTimes[i])
+		{
+			return false;
+		}	
+	}
+	if(startTimes[startTimes.length-1]>endTimes[endTimes.length-1]){
+		return false;
+	}
+	return true;
+}
+function save(){
+	
+	var t=document.getElementById("program");  
+
+	var tableData= [];
+	var startTimes = [];
+	var endTimes = [];
+	var rl= t.rows.length;  
+	for (var i=1;i<rl;i++) {  
+		var id=t.rows[i].cells[0].innerHTML;
+		var name = name =t.rows[i].cells[2].getElementsByTagName("input")[0].value; 
+
+		var broadcastTime=t.rows[i].cells[3].getElementsByTagName("input")[0].value; 
+		startTimes[i-1] = broadcastTime;
+ 		var endTime=t.rows[i].cells[4].getElementsByTagName("input")[0].value;  
+ 		endTimes[i-1] = endTime;
+ 		var typeId=t.rows[i].cells[5].getElementsByTagName("select")[0].value;
+ 		var broadcastTypeId = t.rows[i].cells[6].getElementsByTagName("select")[0].value;
+ 		var programSysId = t.rows[i].cells[7].getElementsByTagName("select")[0].value;
+ 		var isReplay=t.rows[i].cells[8].getElementsByTagName("input")[0].checked;  
+ 		
+ 		var isDel=t.rows[i].cells[9].getElementsByTagName("input")[0].checked;  
+ 		var initName = t.rows[i].cells[12].innerHTML;
+ 		initName=(initName==""||initName==undefined)?name:initName;
+ 		var type = {'id':typeId};
+ 		var broadcastType = {'id':broadcastTypeId};
+ 		var programSys = {'id':programSysId};
+ 		tableData[i-1] = {
+				'id':id,
+				'name':name,
+		        'broadcastTime':broadcastTime,
+		        'endTime':endTime,
+		        'type':type,
+		        'broadcastType':broadcastType,
+		        'programSys':programSys,
+		        'isReplay':isReplay,
+		        'isDel':isDel,
+		        'initName':initName
+		}
+		
+	}  
+
+		if(timeVerify(startTimes,endTimes)){
+			$.ajax({
+				url:"<?php echo $this->url('Program',['controller' => 'index','action' => 'edit','date' => $date,'cId'=>$playbill->getChannel()->getId(),'subrun' => 'save'])?>",
+				type:"post",
+				data:{
+					'data' :tableData,
+				},
+				success:function(data){
+					alert(data);
+					location.href="<?php echo $this->url('Program',['controller' => 'index','action' => 'index','date' => $date])?>";
+						
+					}
+				}
+			);
+		}
+		else{
+			alert("节目的结束时间必须大于该节目的播出时间且小于下一个节目的播出时间");
+		}
+	
+	
+}
+    function add(p){
+		$(p.parentNode.parentNode).after(
+			"<tr>"+
+				"<td style='display:none'>0</td>"+
+				"<td></td>"+
+				"<td><input style='width:100px;' type='text' /></td>"+
+				"<td><input style='width:70px;' value='00:00:00' type='text' /></td>"+
+				"<td><input style='width:70px;' value='00:00:00' type='text' /></td>"+
+				"<td><select><option selected='selected' value=''></options>"+
+				<?php foreach ($programTypes as $programType) :?>
+				    "<?php echo "<option value=".$programType->getId().">".$this->escapeHtml($programType->getValue())."</option>";?>"+
+			    <?php endforeach;?>
+			    "</select></td>"+
+				"<td><select><option value='8' selected='selected'>顺播</option></select></td>"+
+				"<td><select><option selected='selected' value=''></options>"+
+				<?php foreach ($programNames as $programName) :?>
+			    	"<?php echo "<option value=".$programName->getId().">".$this->escapeHtml($programName->getValue())."</option>";?>"+
+		        <?php endforeach;?>
+				"</select></td>"+
+				"<td><input type='checkbox' /></td>"+
+				"<td style='display:none'><input type='text' value=0 /></td>"+
+				"<td><button onClick='add(this)' >新增↓</button></td>"+
+				"<td><button onClick='cancel(this)' >取消</button></td>"+
+				"<td style='display:none'></td>"+
+			"</tr>"
+				);
+     }
+    function delect(p){
+        $("#del"+p.value).attr('checked',true);
+		$("#tr"+p.value).hide();
+    }
+    function cancel(p){
+		p.parentNode.parentNode.remove();
+    }
+
+
+</script>

@@ -1,0 +1,97 @@
+<?php 
+
+?>
+
+<div style="float: left">
+    <ul>
+        <li><a id='addUser' href="#">添加用户</a></li>
+        
+    </ul>
+</div>
+<table class="table"> 
+    <tr>
+        <th>全名</th>
+        <th>用户号</th>
+        <th>密码</th>
+       
+        <th>角色</th>
+        <th></th>
+        <th></th>
+    </tr>
+    <?php $i=0;foreach ($this->userPaginator as $userEntity) : $i++;?>
+     <tr>
+        <td style="display: none" id="id<?php echo $i;?>" ><?=$userEntity->getId()?></td>
+        <td><?=$userEntity->getFullName();?></td>
+        <td><?=$userEntity->getUsername();?></td>
+        <td><?=$userEntity->getPassword();?></td>
+        <td><?=null!==$userEntity->getRole()?$userEntity->getRole()->getRoleName():'';?></td>
+        <td><a onClick="edit(<?php echo $i;?>)"  href="#">编辑</a></td>
+        <td><a onClick="delect(<?php echo $i;?>)" href="#">删除</a></td>
+    </tr>
+    <?php endforeach;?>
+</table>
+
+<?=$this->paginationcontrol($this->userPaginator,'all','user\pagination',['a'=>3]);?>
+
+
+
+
+
+
+<script>
+
+function delect(i){
+	var id = $('#id'+i).text();
+	 layer.open({
+	  //      shadeClose: true, //点击遮罩关闭
+	        content: '确定删除吗?',
+	       	yes : function (index){
+				$.ajax({
+					url:'<?php echo $this->url('User',['controller'=>'list','action'=>'delectUser'])?>?userId='+id,
+					success : function(data){
+						
+						var result = JSON.parse(data);
+						if(result.status=='fail'){
+							layer.msg(result.msg);
+							layer.close(index);
+							}
+						else if(result.status=='success'){
+							layer.msg(result.msg);
+							layer.close(index);
+							location.reload();
+							}
+						}
+					});
+		       	}
+	    });
+}
+
+function edit(i){
+	var id = $('#id'+i).text();
+	 layer.open({
+	        type: 2,
+	        area: ['600px', '360px'],
+	  //      shadeClose: true, //点击遮罩关闭
+	        content: '<?php echo $this->url('User',['controller'=>'list','action'=>'editUser'])?>?userId='+id,
+	        end : function(){
+				location.reload();
+		        }
+	    });
+
+}
+
+
+$('#addUser').on('click', function(){
+
+	 layer.open({
+	        type: 2,
+	        area: ['600px', '360px'],
+	//       shadeClose: true, //点击遮罩关闭
+	        content: '<?php echo $this->url('User',['controller'=>'list','action'=>'addUser'])?>',
+	        end : function(){
+				location.reload();
+		        }
+	    });
+});
+
+</script>

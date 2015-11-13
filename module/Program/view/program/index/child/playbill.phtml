@@ -1,0 +1,49 @@
+<?php $date=$this->date;
+      $playbills=$this->playbills;?>
+
+<?php foreach ($playbills as $playbill) : ?>
+    <div class="panel panel panel-default">
+      <div class="panel-body">
+         <div style="float: left;">
+             <div>
+                <b style="font-size: 28px;"><?php echo $playbill->getChannel()->getValue()?></b>
+                <span style="margin-left: 10px"><?php echo $playbill->getProgramCount() == null?"未生成":"已生成"?></span>
+            </div>
+            <div style="margin-top:20px;">
+                <span>提示：此节目单关联<?php echo $playbill->getProgramCount() == null?"0":$playbill->getProgramCount();?>个节目</span>
+            </div>
+         </div>
+         <div  style="float:right;width:20%;height:100%">
+  
+            <?php echo $playbill->getProgramCount() == null?"<a href=". $this->url('Program',['controller' => 'index' ,'action' => 'add','date' => $date,'cId'=>$playbill->getChannel()->getId()]).">添加节目单</a>":"<a href=". $this->url('Program',['controller' => 'index','action' => 'edit','date' => $date , 'cId' => $playbill->getChannel()->getId()]). ">重新编辑节目单</a><a style='margin-left:20px;' href=". $this->url('Program',['controller' => 'index','action' => 'look','date' => $date , 'cId' => $playbill->getChannel()->getId()]). ">查看节目单</a></br></br><a href='#' onClick='delect(".$playbill->getChannel()->getId().")'>删除节目单</a>"?>
+            <?php echo "<br/>"?>
+
+         </div>
+      </div>
+    </div>
+<?php endforeach; ?>
+
+
+<script>
+function delect(channelId)
+{
+
+	
+	if(confirm("确认删除吗？"))
+	{
+		$.ajax({
+			url:"<?php echo $this->basepath().'/DH/program/index/delect/'.$date.'/'?>"+channelId+".html",
+			success:function(data){
+				alert(data);
+				location.href="<?php echo $this->url('Program',['controller' => 'index','action' => 'index','date' => $date])?>";
+					
+				}
+			}
+		);
+	}
+	else{
+	}
+
+}
+
+</script>

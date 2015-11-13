@@ -1,0 +1,13 @@
+<?php ?>
+
+<div class="dates">
+<ul >
+<?php $dateArray=$this->dateArray;$i=0;foreach ($dateArray as $date) : $i++?>
+    <li <?php if ($i==4){echo "class='cur'";}?>><strong><?php echo $this->escapeHtml($date['day']);?></strong>
+    <a href="<?php echo $this->url('Program',['controller' => 'index','action' => 'index','date' => $date['date']])?>"><?php echo $this->escapeHtml($date['date']);?></a></li>
+<?php endforeach; ?>
+</ul>
+</div>
+<div class="childView">
+    <?php echo $this->childView?>
+</div>

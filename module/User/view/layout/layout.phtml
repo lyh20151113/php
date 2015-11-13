@@ -1,0 +1,88 @@
+<?php 
+echo $this->doctype(); 
+if(isset($_COOKIE['DH_user'])){
+    $DHUser = json_decode($_COOKIE['DH_user']);
+}
+else{
+    $DHUser = false;
+}
+?>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        
+        <?php echo $this->headTitle('ZF2 '. $this->translate('My Application'))->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?php echo $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+
+        <!-- Le styles -->
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+                        ->prependStylesheet($this->basePath('css/login.css'))
+                        ->prependStylesheet($this->basePath('css/bootstrap-theme.min.css'))
+                        ->prependStylesheet($this->basePath('css/bootstrap.min.css')) ?>
+
+        <!-- Scripts -->
+        <?php echo $this->headScript()
+            ->prependFile($this->basePath('js/bootstrap.min.js'))
+            ->prependFile($this->basePath('js/jquery.min.js'))
+            ->prependFile($this->basePath('js/jquery.easyui.min.js'))
+            ->prependFile($this->basePath('js/respond.min.js'), 'text/javascript', array('conditional' => 'lt IE 9',))
+            ->prependFile($this->basePath('js/html5shiv.js'),   'text/javascript', array('conditional' => 'lt IE 9',))
+        ; ?>
+
+    </head>
+    <body>
+        <nav class="navbar">
+             <div>
+                <div class="navbar-header" style="float:left;">
+                    <a class="navbar-brand"><img src="<?php echo $this->basePath('img/zf2-logo.png') ?>" alt="Zend Framework 2"/>&nbsp;<?php echo $this->translate('My Zend Framework2') ?></a>
+                </div>
+                   <div class="navbar-header" style="float: right">
+                    <span class="navbar-brand"><?php 
+                        if(!$DHUser){}
+                        else{
+                            echo $DHUser->roleName.":".$DHUser->fullName;
+                        }
+                       ?></span>
+                      <span class="navbar-brand" style="margin:left:10px"><?php 
+                        if(!$DHUser){}
+                        else{
+                            echo "<a onClick='logout()' href='#' >注销</a>";
+                        }
+                       ?></span>
+                </div>
+            </div>
+        </nav>
+     
+        <div class="container">
+            <?php echo $this->content; ?>
+    
+        </div> <!-- /container -->
+        <?php echo $this->inlineScript() ?>
+    </body>
+</html>
+
+
+<script>
+	function logout(){
+		if(confirm("确认注销吗？"))
+		{
+			$.ajax({
+				url:"<?php echo $this->url('User',['controller' => 'user','action' => 'logout'])?>",
+				success:function(data){
+					alert(data);
+					location.href="<?php echo $this->url('User',['controller' => 'user','action' => 'login'])?>";
+						
+					}
+				}
+			);
+		}
+		else{
+		}
+				
+	}
+</script>

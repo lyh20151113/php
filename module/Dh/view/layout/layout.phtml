@@ -1,0 +1,124 @@
+<?php 
+
+echo $this->doctype(); 
+if(isset($_COOKIE['DH_user'])){
+    $DHUser = json_decode($_COOKIE['DH_user']);
+}
+else{
+    $DHUser = false;
+}
+?>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        
+        <?php echo $this->headTitle('ZF2 '. $this->translate('My Application'))->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?php echo $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+
+        <!-- Le styles -->
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+                        ->prependStylesheet($this->basePath('css/style.css'))
+                        ->prependStylesheet($this->basePath('css/bootstrap-theme.min.css'))
+                        ->prependStylesheet($this->basePath('css/bootstrap.min.css')) ?>
+
+        <!-- Scripts -->
+        <?php echo $this->headScript()
+            ->prependFile($this->basePath('js/bootstrap.min.js'))
+            ->prependFile($this->basePath('js/jquery.min.js'))
+            ->prependFile($this->basePath('js/jquery.easyui.min.js'))       
+            ->prependFile($this->basePath('js/respond.min.js'), 'text/javascript', array('conditional' => 'lt IE 9',))
+            ->prependFile($this->basePath('js/html5shiv.js'),   'text/javascript', array('conditional' => 'lt IE 9',))
+        ; ?>
+
+    </head>
+    <body>
+        <nav class="navbar-copy">
+             <div>
+                <div class="navbar-header" style="float:left;">
+                    <a class="navbar-brand"><img src="<?php echo $this->basePath('img/zf2-logo.png') ?>" alt="Zend Framework 2"/>&nbsp;<?php echo $this->translate('My Zend Framework2') ?></a>
+                </div>
+                <div class="navbar-header" style="position:absolute;right:50px;">
+                  
+                     <?php if(!$DHUser){?>
+                        <span class="navbar-brand" ><a href='<?php echo $this->url('User',['controller' => 'user','action' => 'login'])?>'>登录</a></span>
+                        <span class="navbar-brand" ><a href='<?php echo $this->url('User',['controller' => 'user','action' => 'register'])?>'>注册</a></span>
+                     <?php }else{ ?>
+                      <span class="navbar-brand glyphicon glyphicon-user" id="user_menu_a" aria-hidden="true"></span>
+                      <div class="user_menu" id="user_menu" style="position:absolute;right:-50px;top:40px;z-index:10;display:none;">
+                            <a><?php if(!$DHUser){}
+                        else{
+                            echo isset($DHUser->roleName)?$DHUser->roleName.':':'',$DHUser->fullName;
+                        }
+                       ?></a>
+                            <a href='#' >个人中心</a>
+                            <a onClick='logout()' href='#' >退出</a>
+                      </div>
+                      <?php } ?>
+                </div> 
+                
+                
+            </div>
+        </nav>
+        <nav class="navbar navbar-default " role="navigation">
+            <div class="container">
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                         <li <?php echo $this->tag=='index'?'class="active"':'';?>><a href="<?php echo $this->url('DH',['controller' => 'index','action' => 'index'])?>">首页 <span class="sr-only">(current)</span></a></li>
+                         <li <?php echo $this->tag=='TV'?'class="active"':'';?>><a href="<?php echo $this->url('Program',['controller' => 'index','action' => 'index'])?>">电视</a></li>
+                         <?php if($DHUser!=false&&$DHUser->roleKey=='superAdmin'){?>
+                         <li  <?php echo $this->tag=='userList'?'class="active"':'';?>><a href="<?php echo $this->url('User',['controller' => 'list','action' => 'index'])?>">用户管理</a></li>
+                         <?php }?>
+                    </ul>
+                    
+                 </div><!-- /.navbar-collapse -->
+            </div>
+        </nav>
+      
+        
+        <div class="container"  >
+            <?php echo $this->content; ?>
+            <hr>
+            <footer>
+                <p>&copy; 2005 - <?php echo date('Y') ?> by LYH. <?php echo $this->translate('All rights reserved.') ?></p>
+            </footer>
+        </div> <!-- /container -->
+        
+        <?php echo $this->inlineScript()
+                        ->prependFile($this->basePath('js/my.js','text/javascript', array('conditional' => 'lt IE 9',)))
+                        ->prependFile($this->basePath('js/layer/layer.js','text/javascript', array('conditional' => 'lt IE 9',)))?>
+        
+    </body>
+</html>
+
+
+<script>
+	function logout(){
+		if(confirm("确认注销吗？"))
+		{
+			$.ajax({
+				url:"<?php echo $this->url('User',['controller' => 'user','action' => 'logout'])?>",
+				success:function(data){
+					
+					if(data.length<10){
+						alert(data);
+						location.reload();
+					}
+					else{
+						alert(data);
+					}
+				//	location.href="<?php echo $this->url('User',['controller' => 'user','action' => 'login'])?>";
+						
+					}
+				}
+			);
+		}
+		else{
+		}
+				
+	}
+</script>
