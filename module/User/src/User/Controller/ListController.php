@@ -46,6 +46,7 @@ class ListController extends AbstractActionController
                 exit(json_encode(Helper::extractByGetMethod($json)));
             }
             $json->setStatus('success');
+            echo 123;
             $json->setMsg('删除成功');
             exit(json_encode(Helper::extractByGetMethod($json)));
         }
