@@ -1,7 +1,7 @@
 <?php
 
 
-namespace DH;
+namespace Dh;
 
 
 use Zend\Mvc\ModuleRouteListener;

@@ -4,8 +4,8 @@ return array(
     'modules' => array(
         'DoctrineModule',
         'DoctrineORMModule',
-        'Dh',
         'Base',
+        'Dh',
         'User',
         'Program',
         

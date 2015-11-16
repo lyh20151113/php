@@ -1,6 +1,6 @@
 <?php
 
-namespace DH\Form;
+namespace Dh\Form;
 use Zend\Form\Form;
 class UserForm extends Form
 {
